@@ -1,0 +1,7 @@
+name: WanderingMarket
+version: '${version}'
+main: com.convallyria.wanderingmarket.WanderingMarket
+api-version: 1.18
+authors: [ SamB440 ]
+description: A global trade system using a wandering market
+website: https://www.convallyria.com
