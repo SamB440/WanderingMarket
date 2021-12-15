@@ -1,5 +1,6 @@
 package com.convallyria.wanderingmarket;
 
+import com.convallyria.wanderingmarket.config.Configuration;
 import com.convallyria.wanderingmarket.gson.ItemStackAdapter;
 import com.convallyria.wanderingmarket.gson.OfflinePlayerAdapter;
 import com.convallyria.wanderingmarket.listener.WanderingMarketListener;
@@ -73,8 +74,7 @@ public final class WanderingMarket extends ExtendedJavaPlugin {
         this.saveDefaultConfig();
         this.registerListeners();
 
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new WanderingMarketSpawner(this), 20L, 3600L);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new WanderingMarketSpawner(this), 20L, Configuration.DELAY.getInt());
     }
 
     @Override

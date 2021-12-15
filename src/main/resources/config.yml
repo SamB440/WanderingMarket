@@ -1,0 +1,7 @@
+# The delay for despawning the wandering market and then showing a new one
+delay: 3600 # Default 3600 ticks (5 mins)
+
+# Items that cannot be traded in any form
+blacklisted_items:
+  - AIR
+  - BEDROCK

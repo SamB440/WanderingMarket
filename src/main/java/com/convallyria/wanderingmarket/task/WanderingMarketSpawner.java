@@ -1,6 +1,7 @@
 package com.convallyria.wanderingmarket.task;
 
 import com.convallyria.wanderingmarket.WanderingMarket;
+import com.convallyria.wanderingmarket.config.Configuration;
 import com.convallyria.wanderingmarket.market.item.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -42,14 +43,14 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
         plugin.adventure().all().sendMessage(component);
         player.sendMessage(Component.text("Shift + Right Click the Wandering Market villager to sell an item!").color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
 
-        final Location location = player.getLocation();
+        final Location location = player.getLocation().clone().add(Math.random() * 10, 0, Math.random() * 10);
         WanderingTrader wanderingTrader = (WanderingTrader) location.getWorld().spawnEntity(location, EntityType.WANDERING_TRADER);
         wanderingTrader.setCustomName("Wandering Market");
         wanderingTrader.setCustomNameVisible(true);
         wanderingTrader.setBreed(false);
         wanderingTrader.setTarget(player);
         wanderingTrader.setRecipes(new ArrayList<>());
-        wanderingTrader.setDespawnDelay(3400);
+        wanderingTrader.setDespawnDelay(Configuration.DELAY.getInt());
         wanderingTrader.setAware(false);
         wanderingTrader.setInvulnerable(true);
         location.getWorld().playSound(location, Sound.EVENT_RAID_HORN, 3f, 1f);

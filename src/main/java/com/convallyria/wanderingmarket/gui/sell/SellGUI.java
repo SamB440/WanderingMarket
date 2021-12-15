@@ -1,6 +1,7 @@
 package com.convallyria.wanderingmarket.gui.sell;
 
 import com.convallyria.wanderingmarket.WanderingMarket;
+import com.convallyria.wanderingmarket.config.Configuration;
 import com.convallyria.wanderingmarket.gui.BaseGUI;
 import com.convallyria.wanderingmarket.market.item.MarketItem;
 import com.convallyria.wanderingmarket.util.ItemStackBuilder;
@@ -60,7 +61,7 @@ public class SellGUI extends BaseGUI {
                 String[] text = strings[0].split("x");
                 infoPane.removeItem(0, 0);
                 final Optional<Material> material = Enums.getIfPresent(Material.class, text[0].trim().toUpperCase(Locale.ROOT));
-                if (material.isPresent() && material.get().isItem() && !material.get().isAir()) {
+                if (material.isPresent() && material.get().isItem() && !Configuration.BLACKLISTED_ITEMS.getMaterialList().contains(material.get())) {
                     try {
                         int count = Integer.parseInt(text[1].trim());
                         if (count > 64 || count < 1) throw new NumberFormatException();
