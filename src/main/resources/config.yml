@@ -1,6 +1,12 @@
 # The delay for despawning the wandering market and then showing a new one
 delay: 3600 # Default 3600 ticks (5 mins)
 
+# Broadcast when a dupe attempt is requested
+broadcast_dupe_attempt: true
+
+# Minimum players to spawn wandering merchant
+minimum_players: 1
+
 # Items that cannot be traded in any form
 blacklisted_items:
   - AIR

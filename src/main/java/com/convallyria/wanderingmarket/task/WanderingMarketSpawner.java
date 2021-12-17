@@ -3,6 +3,7 @@ package com.convallyria.wanderingmarket.task;
 import com.convallyria.wanderingmarket.WanderingMarket;
 import com.convallyria.wanderingmarket.config.Configuration;
 import com.convallyria.wanderingmarket.market.item.MarketItem;
+import com.convallyria.wanderingmarket.translation.Translations;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -27,7 +28,9 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
 
     @Override
     public void run() {
-        if (Bukkit.getOnlinePlayers().isEmpty()) return;
+        if (Bukkit.getOnlinePlayers().size() < Configuration.MINIMUM_PLAYERS.getInt()) return;
+        if (plugin.getGlobalMarket().getActiveMarketItems().isEmpty()) return;
+
         // Get a random online player
         final Player player = Bukkit.getOnlinePlayers().stream().skip((int) (Bukkit.getOnlinePlayers().size() * Math.random())).findFirst().orElse(null);
         if (player == null) return;
@@ -41,7 +44,7 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
                                 .color(NamedTextColor.WHITE)))
                 .build();
         plugin.adventure().all().sendMessage(component);
-        player.sendMessage(Component.text("Shift + Right Click the Wandering Market villager to sell an item!").color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
+        plugin.adventure().player(player).sendMessage(Translations.INSTRUCTION.color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
 
         final Location location = player.getLocation().clone().add(Math.random() * 10, 0, Math.random() * 10);
         WanderingTrader wanderingTrader = (WanderingTrader) location.getWorld().spawnEntity(location, EntityType.WANDERING_TRADER);
@@ -56,9 +59,9 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
         location.getWorld().playSound(location, Sound.EVENT_RAID_HORN, 3f, 1f);
 
         final List<MerchantRecipe> recipes = new ArrayList<>();
-        for (MarketItem marketItem : plugin.getGlobalMarket().getMarketItems()) {
-            MerchantRecipe merchantRecipe = new MerchantRecipe(marketItem.sell().ensureServerConversions(), 1);
-            merchantRecipe.addIngredient(marketItem.buy().ensureServerConversions());
+        for (MarketItem marketItem : plugin.getGlobalMarket().getActiveMarketItems()) {
+            MerchantRecipe merchantRecipe = new MerchantRecipe(marketItem.sell(), 1);
+            merchantRecipe.addIngredient(marketItem.buy());
             recipes.add(merchantRecipe);
         }
         wanderingTrader.setRecipes(recipes);

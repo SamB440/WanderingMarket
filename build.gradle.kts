@@ -6,8 +6,8 @@ plugins {
 project.group = "com.convallyria"
 project.version = "1.0.0-SNAPSHOT"
 
-java.targetCompatibility = JavaVersion.VERSION_17
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_16
+java.sourceCompatibility = JavaVersion.VERSION_16
 
 repositories {
     mavenCentral()
@@ -31,7 +31,7 @@ dependencies {
     implementation("com.github.stefvanschie.inventoryframework:IF:0.10.3")
     implementation("me.lucko:helper:5.6.8")
 
-    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
 }
 

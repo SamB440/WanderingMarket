@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GlobalMarket {
 
@@ -20,5 +21,9 @@ public class GlobalMarket {
 
     public List<MarketItem> getMarketItems() {
         return ImmutableList.copyOf(marketItems);
+    }
+
+    public List<MarketItem> getActiveMarketItems() {
+        return ImmutableList.copyOf(marketItems.stream().filter(marketItem -> !marketItem.isSold()).collect(Collectors.toList()));
     }
 }

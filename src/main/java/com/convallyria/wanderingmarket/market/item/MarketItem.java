@@ -8,6 +8,7 @@ public class MarketItem {
     private ItemStack sell;
     private ItemStack buy;
     private OfflinePlayer seller;
+    private boolean sold;
 
     public MarketItem(ItemStack sell, ItemStack buy, OfflinePlayer seller) {
         this.sell = sell;
@@ -25,5 +26,13 @@ public class MarketItem {
 
     public OfflinePlayer seller() {
         return seller;
+    }
+
+    public boolean isSold() {
+        return sold;
+    }
+
+    public void setSold(boolean sold) {
+        this.sold = sold;
     }
 }

@@ -14,7 +14,9 @@ import java.util.List;
 
 public enum Configuration {
     DELAY("delay"),
-    BLACKLISTED_ITEMS("blacklisted_items");
+    BLACKLISTED_ITEMS("blacklisted_items"),
+    BROADCAST_DUPE_ATTEMPT("broadcast_dupe_attempt"),
+    MINIMUM_PLAYERS("minimum_players");
 
     private final String key;
 
@@ -28,6 +30,14 @@ public enum Configuration {
 
     public Object get() {
         return get(key);
+    }
+
+    public static boolean getBoolean(String key) {
+        return JavaPlugin.getPlugin(WanderingMarket.class).getConfig().getBoolean(key);
+    }
+
+    public boolean getBoolean() {
+        return getBoolean(key);
     }
 
     public static int getInt(String key) {

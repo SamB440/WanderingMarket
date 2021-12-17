@@ -3,6 +3,7 @@ package com.convallyria.wanderingmarket;
 import com.convallyria.wanderingmarket.config.Configuration;
 import com.convallyria.wanderingmarket.gson.ItemStackAdapter;
 import com.convallyria.wanderingmarket.gson.OfflinePlayerAdapter;
+import com.convallyria.wanderingmarket.listener.JoinListener;
 import com.convallyria.wanderingmarket.listener.WanderingMarketListener;
 import com.convallyria.wanderingmarket.market.GlobalMarket;
 import com.convallyria.wanderingmarket.task.WanderingMarketSpawner;
@@ -94,6 +95,7 @@ public final class WanderingMarket extends ExtendedJavaPlugin {
     private void registerListeners() {
         final PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new WanderingMarketListener(this), this);
+        pm.registerEvents(new JoinListener(this), this);
     }
 
     private void registerTranslations() {

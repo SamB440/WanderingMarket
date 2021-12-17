@@ -4,6 +4,7 @@ import com.convallyria.wanderingmarket.WanderingMarket;
 import com.convallyria.wanderingmarket.config.Configuration;
 import com.convallyria.wanderingmarket.gui.BaseGUI;
 import com.convallyria.wanderingmarket.market.item.MarketItem;
+import com.convallyria.wanderingmarket.translation.Translations;
 import com.convallyria.wanderingmarket.util.ItemStackBuilder;
 import com.convallyria.wanderingmarket.util.SignMenuFactory;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
@@ -69,15 +70,16 @@ public class SellGUI extends BaseGUI {
                         final ItemStack buyItem = new ItemStack(itemStack.getType(), itemStack.getAmount());
                         final ItemStack sellItem = sell.clone();
                         if (itemStack.getType() == sell.getType() && itemStack.getAmount() < sell.getAmount()) {
-                            player.sendMessage(Component.text("No duping for you!").color(NamedTextColor.RED));
-                            Bukkit.getServer().broadcast(Component.text(player.getName() + " tried to dupe using wandering market! SHAME!").color(NamedTextColor.RED));
+                            if (Configuration.BROADCAST_DUPE_ATTEMPT.getBoolean()) {
+                                plugin.adventure().all().sendMessage(Translations.DUPE_ATTEMPT.args(Component.text(player.getName()).color(NamedTextColor.RED)));
+                            }
                             return false;
                         }
 
                         MarketItem marketItem = new MarketItem(sellItem, buyItem, player);
-                        for (MarketItem item : plugin.getGlobalMarket().getMarketItems()) {
+                        for (MarketItem item : plugin.getGlobalMarket().getActiveMarketItems()) {
                             if (sellItem.equals(item.sell()) && buyItem.equals(item.buy())) {
-                                player.sendMessage(Component.text("The market already has the exact same items!").color(NamedTextColor.RED));
+                                plugin.adventure().player(player).sendMessage(Translations.TRADE_ALREADY_EXISTS.color(NamedTextColor.RED));
                                 return true;
                             }
                         }
@@ -85,7 +87,8 @@ public class SellGUI extends BaseGUI {
                         //todo trade complete gui?
 
                         plugin.getGlobalMarket().addMarketItem(marketItem);
-                        Bukkit.broadcast(Component.text(player.getName() + " has added a trade to the wandering market...").color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
+                        plugin.adventure().all().sendMessage(Translations.TRADE_ADDED.args(Component.text(player.getName())).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
+
                         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                             onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1f, 1f);
                         }
