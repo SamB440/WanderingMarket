@@ -32,7 +32,10 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
         if (plugin.getGlobalMarket().getActiveMarketItems().isEmpty()) return;
 
         // Get a random online player
-        final Player player = Bukkit.getOnlinePlayers().stream().skip((int) (Bukkit.getOnlinePlayers().size() * Math.random())).findFirst().orElse(null);
+        final Player player = Bukkit.getOnlinePlayers().stream()
+                .filter(possiblePlayer ->
+                    !Configuration.BLACKLISTED_WORLDS.getStringList().contains(possiblePlayer.getWorld().getName()))
+                .skip((int) (Bukkit.getOnlinePlayers().size() * Math.random())).findFirst().orElse(null);
         if (player == null) return;
 
         final Component component = Component.text().append(Component.text("The Wandering Market has arrived near").color(NamedTextColor.GRAY))

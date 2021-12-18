@@ -11,3 +11,8 @@ minimum_players: 1
 blacklisted_items:
   - AIR
   - BEDROCK
+
+# List of worlds the market should not spawn in.
+blacklisted_worlds:
+  - world_nether
+  - world_the_end

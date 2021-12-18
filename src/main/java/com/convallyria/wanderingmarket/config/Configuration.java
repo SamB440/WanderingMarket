@@ -16,7 +16,8 @@ public enum Configuration {
     DELAY("delay"),
     BLACKLISTED_ITEMS("blacklisted_items"),
     BROADCAST_DUPE_ATTEMPT("broadcast_dupe_attempt"),
-    MINIMUM_PLAYERS("minimum_players");
+    MINIMUM_PLAYERS("minimum_players"),
+    BLACKLISTED_WORLDS("blacklisted_worlds");
 
     private final String key;
 
@@ -26,6 +27,14 @@ public enum Configuration {
 
     public static Object get(String key) {
         return JavaPlugin.getPlugin(WanderingMarket.class).getConfig().get(key);
+    }
+
+    public List<String> getStringList() {
+        return getStringList(key);
+    }
+
+    public static List<String> getStringList(String key) {
+        return JavaPlugin.getPlugin(WanderingMarket.class).getConfig().getStringList(key);
     }
 
     public Object get() {
