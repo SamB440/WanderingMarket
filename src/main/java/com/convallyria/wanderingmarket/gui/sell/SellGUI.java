@@ -59,7 +59,6 @@ public class SellGUI extends BaseGUI {
             menu.open(player);
             menu.reopenIfFail(true);
             menu.response(((clicker, strings) -> {
-                System.out.println(String.join("", strings));
                 String[] text = String.join("", strings).split("x");
                 infoPane.removeItem(0, 0);
                 final Optional<Material> material = Enums.getIfPresent(Material.class, text[0].trim().toUpperCase(Locale.ROOT));
