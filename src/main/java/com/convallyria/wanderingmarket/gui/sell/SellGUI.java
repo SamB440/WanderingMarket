@@ -54,12 +54,13 @@ public class SellGUI extends BaseGUI {
                 .withLore("&#4169E1Click to select what item you want in return!")
                 .build(), event -> {
             final Player player = (Player) event.getWhoClicked();
-            player.sendMessage("Enter item and amount, e.g: applex10");
-            SignMenuFactory.Menu menu = plugin.getSignMenuFactory().newMenu(new ArrayList<>(List.of("applex10")));
+            plugin.adventure().player(player).sendMessage(Translations.ENTER_AMOUNT.color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
+            SignMenuFactory.Menu menu = plugin.getSignMenuFactory().newMenu(new ArrayList<>(List.of("APPLEx10", "", "", "")));
             menu.open(player);
             menu.reopenIfFail(true);
             menu.response(((clicker, strings) -> {
-                String[] text = strings[0].split("x");
+                System.out.println(String.join("", strings));
+                String[] text = String.join("", strings).split("x");
                 infoPane.removeItem(0, 0);
                 final Optional<Material> material = Enums.getIfPresent(Material.class, text[0].trim().toUpperCase(Locale.ROOT));
                 if (material.isPresent() && material.get().isItem() && !Configuration.BLACKLISTED_ITEMS.getMaterialList().contains(material.get())) {

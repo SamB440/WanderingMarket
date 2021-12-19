@@ -12,4 +12,5 @@ public class Translations {
     public static final TranslatableComponent NO_TRADE_MATCH = Component.translatable("no_trade_match");
     public static final TranslatableComponent INSTRUCTION = Component.translatable("instruction");
     public static final TranslatableComponent NO_TRADES = Component.translatable("no_trades");
+    public static final TranslatableComponent ENTER_AMOUNT = Component.translatable("enter_amount");
 }
