@@ -55,20 +55,29 @@ public class SellGUI extends BaseGUI {
                 .build(), event -> {
             final Player player = (Player) event.getWhoClicked();
             plugin.adventure().player(player).sendMessage(Translations.ENTER_AMOUNT.color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
+
+            // Initialise and open our sign menu with an example
             SignMenuFactory.Menu menu = plugin.getSignMenuFactory().newMenu(new ArrayList<>(List.of("APPLEx10", "", "", "")));
             menu.open(player);
             menu.reopenIfFail(true);
+            //TODO: this is a mess
             menu.response(((clicker, strings) -> {
+                // Multi-line support
                 String[] text = String.join("", strings).split("x");
                 infoPane.removeItem(0, 0);
                 final Optional<Material> material = Enums.getIfPresent(Material.class, text[0].trim().toUpperCase(Locale.ROOT));
                 if (material.isPresent() && material.get().isItem() && !Configuration.BLACKLISTED_ITEMS.getMaterialList().contains(material.get())) {
                     try {
+                        // Check the amount they're asking for. Obviously it can't be less than 1 or bigger than the item max stack size.
                         int count = Integer.parseInt(text[1].trim());
-                        if (count > 64 || count < 1) throw new NumberFormatException();
+                        if (count > material.get().getMaxStackSize() || count < 1) throw new NumberFormatException();
+
+                        // Create the items
                         final ItemStack itemStack = new ItemStack(material.get(), count);
                         final ItemStack buyItem = new ItemStack(itemStack.getType(), itemStack.getAmount());
                         final ItemStack sellItem = sell.clone();
+
+                        // Nice try
                         if (itemStack.getType() == sell.getType() && itemStack.getAmount() < sell.getAmount()) {
                             if (Configuration.BROADCAST_DUPE_ATTEMPT.getBoolean()) {
                                 plugin.adventure().all().sendMessage(Translations.DUPE_ATTEMPT.args(Component.text(player.getName()).color(NamedTextColor.RED)));
@@ -77,6 +86,7 @@ public class SellGUI extends BaseGUI {
                         }
 
                         MarketItem marketItem = new MarketItem(sellItem, buyItem, player);
+                        // Do a check to see if a trade of this exact type already exists - todo: is this needed?
                         for (MarketItem item : plugin.getGlobalMarket().getActiveMarketItems()) {
                             if (sellItem.equals(item.sell()) && buyItem.equals(item.buy())) {
                                 plugin.adventure().player(player).sendMessage(Translations.TRADE_ALREADY_EXISTS.color(NamedTextColor.RED));
@@ -86,18 +96,23 @@ public class SellGUI extends BaseGUI {
 
                         //todo trade complete gui?
 
+                        // Add it to the market
                         plugin.getGlobalMarket().addMarketItem(marketItem);
                         plugin.adventure().all().sendMessage(Translations.TRADE_ADDED.args(Component.text(player.getName())).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
 
+                        // Play a sound to everyone to let them know!
                         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                             onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1f, 1f);
                         }
+
+                        // Add it to the player's merchant, so they can see it has been properly added
                         final List<MerchantRecipe> recipes = new ArrayList<>(wanderingTrader.getRecipes());
                         MerchantRecipe merchantRecipe = new MerchantRecipe(sellItem, 1);
                         merchantRecipe.addIngredient(buyItem);
                         recipes.add(merchantRecipe);
                         wanderingTrader.setRecipes(recipes);
 
+                        // Delay by a tick, otherwise we get errors...
                         Bukkit.getScheduler().runTask(plugin, () -> {
                             clicker.closeInventory();
                             clicker.getInventory().remove(sell);

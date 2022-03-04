@@ -31,7 +31,7 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
     public void run() {
         if (Bukkit.getOnlinePlayers().size() < Configuration.MINIMUM_PLAYERS.getInt()) return;
 
-        // Get a random online player
+        // Get a random online player, ignoring blacklisted worlds
         final Player player = Bukkit.getOnlinePlayers().stream()
                 .filter(possiblePlayer ->
                     !Configuration.BLACKLISTED_WORLDS.getStringList().contains(possiblePlayer.getWorld().getName()))
@@ -49,6 +49,8 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
         plugin.adventure().all().sendMessage(component);
         plugin.adventure().player(player).sendMessage(Translations.INSTRUCTION.color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
 
+        // Spawn our wadering trader, and give it the attributes we need.
+        // Also spawn it at a random offset. TODO: spawn at highest block so he doesn't go inside walls
         final Location location = player.getLocation().clone().add(Math.random() * 10, 0, Math.random() * 10);
         WanderingTrader wanderingTrader = (WanderingTrader) location.getWorld().spawnEntity(location, EntityType.WANDERING_TRADER);
         wanderingTrader.setCustomName(ChatColor.BLUE + "Wandering Market");
@@ -60,6 +62,7 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
         wanderingTrader.setInvulnerable(true);
         location.getWorld().playSound(location, Sound.EVENT_RAID_HORN, 3f, 1f);
 
+        // Add all our active recipes from the current state of the market
         final List<MerchantRecipe> recipes = new ArrayList<>();
         for (MarketItem marketItem : plugin.getGlobalMarket().getActiveMarketItems()) {
             MerchantRecipe merchantRecipe = new MerchantRecipe(marketItem.sell(), 1);

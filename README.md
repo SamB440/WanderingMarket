@@ -8,6 +8,10 @@ Players can then choose to add an item to the market in exchange for another ite
 The wandering market will then go around player's who may or may not exchange their items.
 This is a very useful plugin for SMPs without spawn commands and especially servers that like to keep bases secret.
 
+## What about the vanilla wandering trader?
+The vanilla wandering trader will have the same mechanics as usual, there are no changes to that.
+Optionally, you can replace him with our market, and instead of using the interval it will just let vanilla handle that.
+
 ## What about dupes / OP items / etc?
 Because of the way this works, you can't just magically get 64 obsidian or diamonds or similar. 
 Another player on the server would need to have that, and deem that what they are exchanging it for is worth it.

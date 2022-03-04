@@ -19,11 +19,11 @@ public class GlobalMarket {
         marketItems.remove(marketItem);
     }
 
-    public List<MarketItem> getMarketItems() {
+    public ImmutableList<MarketItem> getMarketItems() {
         return ImmutableList.copyOf(marketItems);
     }
 
-    public List<MarketItem> getActiveMarketItems() {
+    public ImmutableList<MarketItem> getActiveMarketItems() {
         return ImmutableList.copyOf(marketItems.stream().filter(marketItem -> !marketItem.isSold()).collect(Collectors.toList()));
     }
 }

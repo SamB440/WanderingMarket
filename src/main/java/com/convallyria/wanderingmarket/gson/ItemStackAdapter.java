@@ -1,7 +1,5 @@
 package com.convallyria.wanderingmarket.gson;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -13,13 +11,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Type;
 
+/**
+ * We serialise ItemStacks to Base64.
+ * Bukkit serialisation API does not serialise ItemStacks properly - a lot of the data is lost.
+ * We need an exact copy otherwise we will have NBT issues.
+ */
 public class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {
-
-    private final Gson gson;
-
-    public ItemStackAdapter() {
-        this.gson = new GsonBuilder().create();
-    }
 
     @Override
     public ItemStack deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {

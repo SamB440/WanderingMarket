@@ -34,12 +34,15 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
         if (rightClicked instanceof WanderingTrader wanderingTrader) {
             if (wanderingTrader.getPersistentDataContainer().has(WanderingMarketSpawner.KEY, PersistentDataType.INTEGER)) {
                 if (!player.isSneaking()) {
+                    // Let the player know there are no trades, because otherwise nothing happens, and they may think it's a bug
                     if (wanderingTrader.getRecipes().isEmpty()) {
                         plugin.adventure().player(player).sendMessage(Translations.NO_TRADES);
                     }
                     return;
                 }
-                if (player.getInventory().getItemInMainHand().getType().isAir()) return;
+
+                if (player.getInventory().getItemInMainHand().getType().isAir()) return; // Nice try
+                // Open sign menu and ask for what they want in return
                 SellGUI sellGUI = new SellGUI(plugin, player.getInventory().getItemInMainHand(), wanderingTrader);
                 Bukkit.getScheduler().runTaskLater(plugin, () -> sellGUI.open(player), 1L);
                 event.setCancelled(true);
@@ -51,7 +54,7 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
     public void onTrade(InventoryClickEvent event) {
         if (event.getInventory().getType() != InventoryType.MERCHANT) return;
         final Player player = (Player) event.getWhoClicked();
-        if (event.getSlot() != 2) return; // Result slot
+        if (event.getSlot() != 2) return; // Must be result slot
 
         MerchantInventory merchantInventory = (MerchantInventory) event.getInventory();
         // So don't use merchantInventory#getMerchant - that returns an inventory... not the entity... bukkit api...
@@ -63,11 +66,13 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
                     final ItemStack sellItem = marketItem.sell();
                     final ItemStack buyItem = marketItem.buy();
                     if (sellItem.equals(recipe.getResult()) && buyItem.equals(recipe.getIngredients().get(0))) {
+                        // If the seller is not online, set it as sold and don't remove so we can check when they come back.
                         if (!marketItem.seller().isOnline()) {
                             marketItem.setSold(true);
                             return;
                         }
 
+                        // Otherwise, give the item that the buyer inputted to the seller.
                         Player seller = marketItem.seller().getPlayer();
                         plugin.adventure().player(seller).sendMessage(Translations.ITEMS_SOLD.args(Component.text(sellItem.getType().name()), Component.text(sellItem.getAmount()), Component.text(buyItem.getType().name()), Component.text(buyItem.getAmount())).color(NamedTextColor.GREEN));
                         seller.getInventory().addItem(buyItem).forEach((index, drop) -> seller.getWorld().dropItem(seller.getEyeLocation(), drop));
@@ -76,6 +81,7 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
                     }
                 }
 
+                // It was bought by someone else already!
                 plugin.adventure().player(player).sendMessage(Translations.NO_TRADE_MATCH.color(NamedTextColor.RED));
                 event.setCancelled(true);
             }
@@ -85,6 +91,7 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
     @EventHandler
     public void onUnload(ChunkUnloadEvent event) {
         final Chunk chunk = event.getChunk();
+        // Search the chunk for entities, remove any leftover wandering traders that are ours
         for (Entity entity : chunk.getEntities()) {
             if (entity instanceof WanderingTrader wanderingTrader) {
                 final PersistentDataContainer pdc = wanderingTrader.getPersistentDataContainer();
