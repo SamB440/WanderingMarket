@@ -9,6 +9,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -29,7 +30,6 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
     @Override
     public void run() {
         if (Bukkit.getOnlinePlayers().size() < Configuration.MINIMUM_PLAYERS.getInt()) return;
-        if (plugin.getGlobalMarket().getActiveMarketItems().isEmpty()) return;
 
         // Get a random online player
         final Player player = Bukkit.getOnlinePlayers().stream()
@@ -51,8 +51,7 @@ public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable
 
         final Location location = player.getLocation().clone().add(Math.random() * 10, 0, Math.random() * 10);
         WanderingTrader wanderingTrader = (WanderingTrader) location.getWorld().spawnEntity(location, EntityType.WANDERING_TRADER);
-        wanderingTrader.setCustomName("Wandering Market");
-        wanderingTrader.setCustomNameVisible(true);
+        wanderingTrader.setCustomName(ChatColor.BLUE + "Wandering Market");
         wanderingTrader.setBreed(false);
         wanderingTrader.setTarget(player);
         wanderingTrader.setRecipes(new ArrayList<>());

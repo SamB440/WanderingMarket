@@ -8,6 +8,7 @@ import com.convallyria.wanderingmarket.translation.Translations;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WanderingTrader;
@@ -16,9 +17,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public record WanderingMarketListener(WanderingMarket plugin) implements Listener {
@@ -27,7 +30,6 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
     public void onRightClick(PlayerInteractAtEntityEvent event) {
         final Player player = event.getPlayer();
         final Entity rightClicked = event.getRightClicked();
-
 
         if (rightClicked instanceof WanderingTrader wanderingTrader) {
             if (wanderingTrader.getPersistentDataContainer().has(WanderingMarketSpawner.KEY, PersistentDataType.INTEGER)) {
@@ -76,6 +78,19 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
 
                 plugin.adventure().player(player).sendMessage(Translations.NO_TRADE_MATCH.color(NamedTextColor.RED));
                 event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onUnload(ChunkUnloadEvent event) {
+        final Chunk chunk = event.getChunk();
+        for (Entity entity : chunk.getEntities()) {
+            if (entity instanceof WanderingTrader wanderingTrader) {
+                final PersistentDataContainer pdc = wanderingTrader.getPersistentDataContainer();
+                if (pdc.has(WanderingMarketSpawner.KEY, PersistentDataType.INTEGER)) {
+                    wanderingTrader.remove();
+                }
             }
         }
     }
