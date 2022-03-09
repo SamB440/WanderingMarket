@@ -23,20 +23,33 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public record WanderingMarketSpawner(WanderingMarket plugin) implements Runnable {
+public class WanderingMarketSpawner implements Runnable {
 
     public static final NamespacedKey KEY = new NamespacedKey(JavaPlugin.getPlugin(WanderingMarket.class), "wanderingmarket");
+
+    private final WanderingMarket plugin;
+    private int lastPlayer = 0;
+
+    public WanderingMarketSpawner(final WanderingMarket plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public void run() {
         if (Bukkit.getOnlinePlayers().size() < Configuration.MINIMUM_PLAYERS.getInt()) return;
 
-        // Get a random online player, ignoring blacklisted worlds
-        final Player player = Bukkit.getOnlinePlayers().stream()
+        // Get a list of online players, ignoring blacklisted worlds
+        final List<? extends Player> players = Bukkit.getOnlinePlayers().stream()
                 .filter(possiblePlayer ->
-                    !Configuration.BLACKLISTED_WORLDS.getStringList().contains(possiblePlayer.getWorld().getName()))
-                .skip((int) (Bukkit.getOnlinePlayers().size() * Math.random())).findFirst().orElse(null);
+                        !Configuration.BLACKLISTED_WORLDS.getStringList().contains(possiblePlayer.getWorld().getName()))
+                .toList();
+
+        if (lastPlayer > (players.size() - 1)) lastPlayer = 0;
+
+        Player player = players.get(lastPlayer);
         if (player == null) return;
+
+        this.lastPlayer = lastPlayer + 1;
 
         final Component component = Component.text().append(Component.text("The Wandering Market has arrived near").color(NamedTextColor.GRAY))
                 .append(Component.space()).append(Component.text(player.getName()).color(NamedTextColor.WHITE))
