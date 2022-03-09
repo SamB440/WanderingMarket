@@ -26,12 +26,12 @@ repositories {
 }
 
 dependencies {
-    implementation("net.kyori:adventure-api:4.9.3")
-    implementation("net.kyori:adventure-platform-bukkit:4.0.0")
-    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.3")
-    implementation("me.lucko:helper:5.6.8")
+    implementation("net.kyori:adventure-api:4.10.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.0.1")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.4")
+    implementation("me.lucko:helper:5.6.9")
 
-    compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
 }
 
@@ -41,6 +41,8 @@ tasks {
     }
 
     shadowJar {
+        archiveClassifier.set("")
+
         relocate("com.github.stefvanschie.inventoryframework", "com.convallyria.wanderingmarket.libs.inventoryframework")
         relocate("me.lucko.helper", "com.convallyria.wanderingmarket.libs.helper")
     }
