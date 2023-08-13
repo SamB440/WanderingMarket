@@ -1,13 +1,14 @@
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 project.group = "com.convallyria"
 project.version = "1.0.0-SNAPSHOT"
 
-java.targetCompatibility = JavaVersion.VERSION_16
-java.sourceCompatibility = JavaVersion.VERSION_16
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
 
 repositories {
     mavenCentral()
@@ -20,18 +21,17 @@ repositories {
         url = uri("https://repo.convallyria.com/snapshots")
     }
 
-    maven { url = uri("https://repo.lucko.me/") }
-    maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
-    maven { url = uri("https://repo.dmulloy2.net/repository/public/") }
+    maven("https://repo.lucko.me/")
+    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.dmulloy2.net/repository/public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
-    implementation("net.kyori:adventure-api:4.10.1")
-    implementation("net.kyori:adventure-platform-bukkit:4.0.1")
-    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.4")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.11")
     implementation("me.lucko:helper:5.6.9")
 
-    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
 }
 

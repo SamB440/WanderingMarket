@@ -13,7 +13,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.translation.TranslationRegistry;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
@@ -21,7 +20,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.FileReader;
@@ -36,19 +34,10 @@ import java.util.stream.Stream;
 
 public final class WanderingMarket extends ExtendedJavaPlugin {
 
-    private BukkitAudiences adventure;
     private GlobalMarket globalMarket;
     private SignMenuFactory signMenuFactory;
 
     private static final File TRADES_FILE = new File("." + File.separator + "plugins" + File.separator + "WanderingMarket" + File.separator + "trades.json");
-
-    @NonNull
-    public BukkitAudiences adventure() {
-        if (this.adventure == null) {
-            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
-        }
-        return this.adventure;
-    }
 
     public GlobalMarket getGlobalMarket() {
         return globalMarket;
@@ -60,7 +49,6 @@ public final class WanderingMarket extends ExtendedJavaPlugin {
 
     @Override
     public void enable() {
-        this.adventure = BukkitAudiences.create(this);
         if (TRADES_FILE.exists()) {
             try (FileReader reader = new FileReader(TRADES_FILE)) {
                 this.globalMarket = getGson().fromJson(reader, GlobalMarket.class);
@@ -80,11 +68,6 @@ public final class WanderingMarket extends ExtendedJavaPlugin {
 
     @Override
     public void disable() {
-        if (this.adventure != null) {
-            this.adventure.close();
-            this.adventure = null;
-        }
-
         try (FileWriter writer = new FileWriter(TRADES_FILE)) {
             getGson().toJson(this.globalMarket, writer);
         } catch (IOException e) {
@@ -130,7 +113,7 @@ public final class WanderingMarket extends ExtendedJavaPlugin {
             return;
         }
 
-        GlobalTranslator.get().addSource(translationRegistry);
+        GlobalTranslator.translator().addSource(translationRegistry);
     }
 
     private Gson getGson() {

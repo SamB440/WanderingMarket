@@ -46,7 +46,7 @@ public class WanderingMarketSpawner implements Runnable {
 
         if (lastPlayer > (players.size() - 1)) lastPlayer = 0;
 
-        Player player = players.get(lastPlayer);
+        Player player = players.isEmpty() ? null : players.get(lastPlayer);
         if (player == null) return;
 
         this.lastPlayer = lastPlayer + 1;
@@ -59,8 +59,8 @@ public class WanderingMarketSpawner implements Runnable {
                         Component.text("The Wandering Market will randomly appear to an online player, where they can trade on the global market!")
                                 .color(NamedTextColor.WHITE)))
                 .build();
-        plugin.adventure().all().sendMessage(component);
-        plugin.adventure().player(player).sendMessage(Translations.INSTRUCTION.color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
+        Bukkit.broadcast(component);
+        player.sendMessage(Translations.INSTRUCTION.color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
 
         // Spawn our wadering trader, and give it the attributes we need.
         // Also spawn it at a random offset. TODO: spawn at highest block so he doesn't go inside walls

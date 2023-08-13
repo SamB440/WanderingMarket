@@ -21,7 +21,9 @@ public record JoinListener(WanderingMarket plugin) implements Listener {
             if (marketItem.seller().getUniqueId().equals(player.getUniqueId()) && marketItem.isSold()) {
                 final ItemStack sellItem = marketItem.sell();
                 final ItemStack buyItem = marketItem.buy();
-                plugin.adventure().player(player).sendMessage(Translations.ITEMS_SOLD.args(Component.text(sellItem.getType().name()), Component.text(sellItem.getAmount()), Component.text(buyItem.getType().name()), Component.text(buyItem.getAmount())).color(NamedTextColor.GREEN));
+                final String sellName = sellItem.getItemMeta() == null ? sellItem.getType().name() : sellItem.getItemMeta().getDisplayName();
+                final String buyName = buyItem.getItemMeta() == null ? buyItem.getType().name() : buyItem.getItemMeta().getDisplayName();
+                player.sendMessage(Translations.ITEMS_SOLD.args(Component.text(sellName).hoverEvent(sellItem), Component.text(sellItem.getAmount()), Component.text(buyItem.getType().name()), Component.text(buyItem.getAmount())).color(NamedTextColor.GREEN));
                 player.getInventory().addItem(buyItem).forEach((index, drop) -> player.getWorld().dropItem(player.getEyeLocation(), drop));
                 plugin.getGlobalMarket().removeMarketItem(marketItem); // Remove it - we don't need it now!
             }

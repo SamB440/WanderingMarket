@@ -36,7 +36,7 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
                 if (!player.isSneaking()) {
                     // Let the player know there are no trades, because otherwise nothing happens, and they may think it's a bug
                     if (wanderingTrader.getRecipes().isEmpty()) {
-                        plugin.adventure().player(player).sendMessage(Translations.NO_TRADES);
+                        player.sendMessage(Translations.NO_TRADES);
                     }
                     return;
                 }
@@ -74,7 +74,7 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
 
                         // Otherwise, give the item that the buyer inputted to the seller.
                         Player seller = marketItem.seller().getPlayer();
-                        plugin.adventure().player(seller).sendMessage(Translations.ITEMS_SOLD.args(Component.text(sellItem.getType().name()), Component.text(sellItem.getAmount()), Component.text(buyItem.getType().name()), Component.text(buyItem.getAmount())).color(NamedTextColor.GREEN));
+                        seller.sendMessage(Translations.ITEMS_SOLD.args(Component.text(sellItem.getType().name()), Component.text(sellItem.getAmount()), Component.text(buyItem.getType().name()), Component.text(buyItem.getAmount())).color(NamedTextColor.GREEN));
                         seller.getInventory().addItem(buyItem).forEach((index, drop) -> seller.getWorld().dropItem(seller.getEyeLocation(), drop));
                         plugin.getGlobalMarket().removeMarketItem(marketItem);
                         return;
@@ -82,7 +82,7 @@ public record WanderingMarketListener(WanderingMarket plugin) implements Listene
                 }
 
                 // It was bought by someone else already!
-                plugin.adventure().player(player).sendMessage(Translations.NO_TRADE_MATCH.color(NamedTextColor.RED));
+                player.sendMessage(Translations.NO_TRADE_MATCH.color(NamedTextColor.RED));
                 event.setCancelled(true);
             }
         }

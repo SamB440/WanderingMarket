@@ -54,7 +54,7 @@ public class SellGUI extends BaseGUI {
                 .withLore("&#4169E1Click to select what item you want in return!")
                 .build(), event -> {
             final Player player = (Player) event.getWhoClicked();
-            plugin.adventure().player(player).sendMessage(Translations.ENTER_AMOUNT.color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
+            player.sendMessage(Translations.ENTER_AMOUNT.color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
 
             // Initialise and open our sign menu with an example
             SignMenuFactory.Menu menu = plugin.getSignMenuFactory().newMenu(new ArrayList<>(List.of("APPLEx10", "", "", "")));
@@ -80,7 +80,7 @@ public class SellGUI extends BaseGUI {
                         // Nice try
                         if (itemStack.getType() == sell.getType() && itemStack.getAmount() < sell.getAmount()) {
                             if (Configuration.BROADCAST_DUPE_ATTEMPT.getBoolean()) {
-                                plugin.adventure().all().sendMessage(Translations.DUPE_ATTEMPT.args(Component.text(player.getName()).color(NamedTextColor.RED)));
+                                Bukkit.broadcast(Translations.DUPE_ATTEMPT.args(Component.text(player.getName()).color(NamedTextColor.RED)));
                             }
                             return false;
                         }
@@ -89,7 +89,7 @@ public class SellGUI extends BaseGUI {
                         // Do a check to see if a trade of this exact type already exists - todo: is this needed?
                         for (MarketItem item : plugin.getGlobalMarket().getActiveMarketItems()) {
                             if (sellItem.equals(item.sell()) && buyItem.equals(item.buy())) {
-                                plugin.adventure().player(player).sendMessage(Translations.TRADE_ALREADY_EXISTS.color(NamedTextColor.RED));
+                                player.sendMessage(Translations.TRADE_ALREADY_EXISTS.color(NamedTextColor.RED));
                                 return true;
                             }
                         }
@@ -98,7 +98,7 @@ public class SellGUI extends BaseGUI {
 
                         // Add it to the market
                         plugin.getGlobalMarket().addMarketItem(marketItem);
-                        plugin.adventure().all().sendMessage(Translations.TRADE_ADDED.args(Component.text(player.getName())).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
+                        Bukkit.broadcast(Translations.TRADE_ADDED.args(Component.text(player.getName())).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
 
                         // Play a sound to everyone to let them know!
                         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
